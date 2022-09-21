@@ -1,0 +1,8 @@
+min-size: 10
+min-price: 10
+max-price: -1
+price-per-block: 1.5
+exponent:
+  divider: 10000
+  min-price: 0.1
+confirmation: true
