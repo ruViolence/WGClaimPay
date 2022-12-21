@@ -49,8 +49,8 @@
         </dependency>
         <dependency>
             <groupId>ru.violence</groupId>
-            <artifactId>coreapi</artifactId>
-            <version>0.1.10-SNAPSHOT</version>
+            <artifactId>coreapi-bukkit</artifactId>
+            <version>0.1.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
