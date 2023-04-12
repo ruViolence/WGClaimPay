@@ -19,7 +19,8 @@ public class WGClaimPayPlugin extends JavaPlugin {
     private @Getter double pricePerBlock;
     private @Getter int exponentDivider;
     private @Getter double exponentMinPrice;
-    private @Getter boolean confirmation;
+    private @Getter boolean confirmationEnabled;
+    private @Getter int confirmationExpireAfter;
 
     @Override
     public void onEnable() {
@@ -42,7 +43,8 @@ public class WGClaimPayPlugin extends JavaPlugin {
         this.pricePerBlock = getConfig().getDouble("price-per-block");
         this.exponentDivider = getConfig().getInt("exponent.divider");
         this.exponentMinPrice = getConfig().getDouble("exponent.min-price");
-        this.confirmation = getConfig().getBoolean("confirmation");
+        this.confirmationEnabled = getConfig().getBoolean("confirmation.enabled");
+        this.confirmationExpireAfter = getConfig().getInt("confirmation.expire-after");
         Check.moreThan(pricePerBlock, 0);
     }
 

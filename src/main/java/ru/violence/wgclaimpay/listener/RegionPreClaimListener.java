@@ -4,7 +4,6 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldguard.bukkit.event.api.RegionPreClaimEvent;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +26,7 @@ public class RegionPreClaimListener implements Listener {
 
     public RegionPreClaimListener(WGClaimPayPlugin plugin) {
         this.plugin = plugin;
-        this.confirmation = plugin.isConfirmation() ? new Confirmation(plugin) : null;
+        this.confirmation = plugin.isConfirmationEnabled() ? new Confirmation(plugin) : null;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -75,7 +74,7 @@ public class RegionPreClaimListener implements Listener {
     private boolean checkConfirmation(@NotNull Player player, @NotNull RegionSelector selector, int regionSize) throws IncompleteRegionException {
         if (confirmation == null) return true;
 
-        Claim claim = new Claim(selector.getRegion(), regionSize);
+        Claim claim = new Claim(confirmation, selector.getRegion(), regionSize);
 
         // If already awaiting
         if (claim.equals(confirmation.takeConfirmation(player))) return true;
@@ -85,10 +84,11 @@ public class RegionPreClaimListener implements Listener {
     }
 
     private static class Confirmation {
-        private static final long AWAITING_TIME = 15 * 1000;
         private final Map<UUID, Claim> confirmations = new HashMap<>();
+        private final long expireAfterMillis;
 
         public Confirmation(WGClaimPayPlugin plugin) {
+            this.expireAfterMillis = plugin.getConfirmationExpireAfter() * 1000L;
             Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 long currentTime = System.currentTimeMillis();
                 confirmations.values().removeIf(claim -> currentTime >= claim.expirationTime);
@@ -104,11 +104,16 @@ public class RegionPreClaimListener implements Listener {
         }
     }
 
-    @RequiredArgsConstructor
     private static class Claim {
         private final @NotNull Region region;
         private final int size;
-        private final long expirationTime = System.currentTimeMillis() + Confirmation.AWAITING_TIME;
+        private final long expirationTime;
+
+        public Claim(@NotNull Confirmation confirmation, @NotNull Region region, int size) {
+            this.region = region;
+            this.size = size;
+            this.expirationTime = System.currentTimeMillis() + confirmation.expireAfterMillis;
+        }
 
         @Override
         public boolean equals(Object o) {
