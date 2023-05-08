@@ -34,8 +34,8 @@ public class RegionPreClaimListener implements Listener {
         Player player = event.getPlayer();
 
         // Check for bypass permission
-        if (event.getPlayer().hasPermission("worldguard.region.unlimited")) return;
-        if (event.getPlayer().hasPermission("wgclaimpay.bypass")) return;
+        if (player.hasPermission("worldguard.region.unlimited")) return;
+        if (player.hasPermission("wgclaimpay.bypass")) return;
 
         String regionId = event.getRegionId();
         RegionSelector selector = plugin.getWorldEdit().getSelection(player).getRegionSelector();
