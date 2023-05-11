@@ -14,19 +14,20 @@ import org.jetbrains.annotations.Nullable;
 import ru.violence.coreapi.bukkit.api.BukkitHelper;
 import ru.violence.wgclaimpay.LangKeys;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
+import ru.violence.wgclaimpay.config.Config;
 import ru.violence.wgclaimpay.util.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class RegionPreClaimListener implements Listener {
+public class RegionClaimPayListener implements Listener {
     private final WGClaimPayPlugin plugin;
     private final @Nullable Confirmation confirmation;
 
-    public RegionPreClaimListener(WGClaimPayPlugin plugin) {
+    public RegionClaimPayListener(WGClaimPayPlugin plugin) {
         this.plugin = plugin;
-        this.confirmation = plugin.isConfirmationEnabled() ? new Confirmation(plugin) : null;
+        this.confirmation = Config.Price.Claim.Confirmation.ENABLED ? new Confirmation(plugin) : null;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -41,14 +42,8 @@ public class RegionPreClaimListener implements Listener {
         RegionSelector selector = plugin.getWorldEdit().getSelection(player).getRegionSelector();
         int regionSize = selector.getArea();
 
-        if (plugin.getMinSize() > 0 && plugin.getMinSize() > regionSize) {
-            event.setCancelled(true);
-            BukkitHelper.getUser(player).sendMessage(LangKeys.REGION_TOO_SMALL.setArgs(plugin.getMinSize(), regionSize, regionId));
-            return;
-        }
-
         double balance = plugin.getEconomy().getBalance(player);
-        int price = Utils.calcPrice(plugin, regionSize);
+        int price = Utils.calcClaimPrice(regionSize);
 
         try {
             if (!checkConfirmation(player, selector, regionSize)) {
@@ -88,7 +83,7 @@ public class RegionPreClaimListener implements Listener {
         private final long expireAfterMillis;
 
         public Confirmation(WGClaimPayPlugin plugin) {
-            this.expireAfterMillis = plugin.getConfirmationExpireAfter() * 1000L;
+            this.expireAfterMillis = Config.Price.Claim.Confirmation.EXPIRE_AFTER * 1000L;
             Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 long currentTime = System.currentTimeMillis();
                 confirmations.values().removeIf(claim -> currentTime >= claim.expirationTime);

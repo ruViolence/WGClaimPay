@@ -1,20 +1,22 @@
 package ru.violence.wgclaimpay.util;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Contract;
 import ru.violence.coreapi.common.util.MathUtil;
-import ru.violence.wgclaimpay.WGClaimPayPlugin;
+import ru.violence.wgclaimpay.config.Config;
 
 import java.util.stream.IntStream;
 
 @UtilityClass
 public class Utils {
-    public int calcPrice(WGClaimPayPlugin plugin, int regionSize) {
-        final double pricePerBlock = plugin.getPricePerBlock();
+    @Contract(pure = true)
+    public int calcClaimPrice(int regionSize) {
+        final double pricePerBlock = Config.Price.Claim.PER_BLOCK;
         double price = 0;
 
-        if (plugin.getExponentDivider() > 0) {
-            final int exponentDivider = plugin.getExponentDivider();
-            final double exponentMinPrice = plugin.getExponentMinPrice();
+        if (Config.Price.Claim.Exponent.DIVIDER > 0) {
+            final int exponentDivider = Config.Price.Claim.Exponent.DIVIDER;
+            final double exponentMinPrice = Config.Price.Claim.Exponent.MIN;
 
             price = IntStream.range(0, regionSize)
                     .parallel()
@@ -33,7 +35,7 @@ public class Utils {
 
         return MathUtil.clamp(
                 finalPrice,
-                plugin.getMinPrice() > 0 ? plugin.getMinPrice() : 1,
-                plugin.getMaxPrice() > 0 ? plugin.getMaxPrice() : Integer.MAX_VALUE);
+                Config.Price.Claim.MIN > 0 ? Config.Price.Claim.MIN : 1,
+                Config.Price.Claim.MAX > 0 ? Config.Price.Claim.MAX : Integer.MAX_VALUE);
     }
 }

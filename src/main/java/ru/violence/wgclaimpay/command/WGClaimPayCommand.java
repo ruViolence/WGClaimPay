@@ -18,17 +18,18 @@ public class WGClaimPayCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
-        if (!sender.hasPermission("wgclaimpay.command.use")) return true;
+        if (args.length == 0) return true;
 
         Player player = (Player) sender;
 
-        if (args.length > 0 && args[0].equals("test")) {
+        if (args[0].equals("test") && sender.hasPermission("wgclaimpay.command.test")) {
             RegionSelector selector = plugin.getWorldEdit().getSelection(player).getRegionSelector();
             int regionSize = selector.getArea();
 
-            int price = Utils.calcPrice(plugin, regionSize);
+            int price = Utils.calcClaimPrice(regionSize);
 
             player.sendMessage("§eThis region costs " + price + " money");
+            return true;
         }
 
         return true;

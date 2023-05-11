@@ -7,20 +7,13 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.violence.coreapi.common.util.Check;
 import ru.violence.wgclaimpay.command.WGClaimPayCommand;
-import ru.violence.wgclaimpay.listener.RegionPreClaimListener;
+import ru.violence.wgclaimpay.config.Config;
+import ru.violence.wgclaimpay.listener.RegionClaimPayListener;
+import ru.violence.wgclaimpay.listener.RegionSizeCheckListener;
 
 public class WGClaimPayPlugin extends JavaPlugin {
     private @Getter WorldEditPlugin worldEdit;
     private @Getter Economy economy;
-    // Config values
-    private @Getter int minSize;
-    private @Getter int minPrice;
-    private @Getter int maxPrice;
-    private @Getter double pricePerBlock;
-    private @Getter int exponentDivider;
-    private @Getter double exponentMinPrice;
-    private @Getter boolean confirmationEnabled;
-    private @Getter int confirmationExpireAfter;
 
     @Override
     public void onEnable() {
@@ -30,22 +23,19 @@ public class WGClaimPayPlugin extends JavaPlugin {
         hookVault();
         hookWorldEdit();
 
-        getServer().getPluginManager().registerEvents(new RegionPreClaimListener(this), this);
+        if (Config.MIN_SIZE > 0) {
+            getServer().getPluginManager().registerEvents(new RegionSizeCheckListener(this), this);
+        }
+        if (Config.Price.Claim.ENABLED) {
+            getServer().getPluginManager().registerEvents(new RegionClaimPayListener(this), this);
+        }
         getServer().getPluginCommand("wgclaimpay").setExecutor(new WGClaimPayCommand(this));
     }
 
     @Override
     public void reloadConfig() {
         super.reloadConfig();
-        this.minSize = getConfig().getInt("min-size");
-        this.minPrice = getConfig().getInt("min-price");
-        this.maxPrice = getConfig().getInt("max-price");
-        this.pricePerBlock = getConfig().getDouble("price-per-block");
-        this.exponentDivider = getConfig().getInt("exponent.divider");
-        this.exponentMinPrice = getConfig().getDouble("exponent.min-price");
-        this.confirmationEnabled = getConfig().getBoolean("confirmation.enabled");
-        this.confirmationExpireAfter = getConfig().getInt("confirmation.expire-after");
-        Check.moreThan(pricePerBlock, 0);
+        Config.load(this);
     }
 
     private void hookVault() {

@@ -1,10 +1,14 @@
 min-size: 10
-min-price: 10
-max-price: -1
-price-per-block: 1.5
-exponent:
-  divider: 10000
-  min-price: 0.1
-confirmation:
-  enabled: true
-  expire-after: 15
+
+price:
+  claim:
+    enabled: true
+    min: 10
+    max: -1
+    per-block: 1.5
+    exponent:
+      divider: 10000
+      min: 0.1
+    confirmation:
+      enabled: true
+      expire-after: 15
