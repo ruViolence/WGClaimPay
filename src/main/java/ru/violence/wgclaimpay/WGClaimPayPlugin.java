@@ -50,22 +50,22 @@ public class WGClaimPayPlugin extends JavaPlugin {
 
     private void hookVault() {
         hook:
-        {
+        try {
             if (getServer().getPluginManager().getPlugin("Vault") == null) break hook;
 
             RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
             if (rsp == null) break hook;
 
-            economy = rsp.getProvider();
+            economy = Check.notNull(rsp.getProvider());
             return;
-        }
+        } catch (Exception ignored) {}
 
         throw new RuntimeException("Vault plugin not found");
     }
 
     private void hookWorldEdit() {
         try {
-            worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+            worldEdit = (WorldEditPlugin) Check.notNull(getServer().getPluginManager().getPlugin("WorldEdit"));
         } catch (Exception e) {
             throw new RuntimeException("WorldEdit plugin not found");
         }
