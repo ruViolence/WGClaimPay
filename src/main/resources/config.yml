@@ -12,3 +12,12 @@ price:
     confirmation:
       enabled: true
       expire-after: 15
+  prolongation:
+    enabled: true
+    time-seconds: 2592000
+    min: 10
+    max: -1
+    per-block: 1.5
+    exponent:
+      divider: 10000
+      min: 0.1

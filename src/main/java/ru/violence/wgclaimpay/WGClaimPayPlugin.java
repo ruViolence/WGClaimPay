@@ -1,6 +1,7 @@
 package ru.violence.wgclaimpay;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -8,20 +9,39 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ru.violence.coreapi.common.util.Check;
 import ru.violence.wgclaimpay.command.WGClaimPayCommand;
 import ru.violence.wgclaimpay.config.Config;
+import ru.violence.wgclaimpay.flag.Flags;
+import ru.violence.wgclaimpay.listener.RegionBillAddListener;
 import ru.violence.wgclaimpay.listener.RegionClaimPayListener;
 import ru.violence.wgclaimpay.listener.RegionSizeCheckListener;
+import ru.violence.wgclaimpay.task.ProlongationTask;
 
 public class WGClaimPayPlugin extends JavaPlugin {
+    private static WGClaimPayPlugin instance;
     private @Getter WorldEditPlugin worldEdit;
+    private @Getter WorldGuardPlugin worldGuard;
     private @Getter Economy economy;
+
+    public static WGClaimPayPlugin getInstance() {
+        return instance;
+    }
+
+    @Override
+    public void onLoad() {
+        hookWorldEdit();
+        hookWorldGuard();
+
+        worldGuard.getFlagRegistry().register(Flags.BILL_PAYERS);
+        worldGuard.getFlagRegistry().register(Flags.BILL_SINCE);
+    }
 
     @Override
     public void onEnable() {
+        instance = this;
+
         saveDefaultConfig();
         reloadConfig();
 
         hookVault();
-        hookWorldEdit();
 
         if (Config.MIN_SIZE > 0) {
             getServer().getPluginManager().registerEvents(new RegionSizeCheckListener(this), this);
@@ -29,7 +49,16 @@ public class WGClaimPayPlugin extends JavaPlugin {
         if (Config.Price.Claim.ENABLED) {
             getServer().getPluginManager().registerEvents(new RegionClaimPayListener(this), this);
         }
+        if (Config.Price.Prolongation.ENABLED) {
+            getServer().getPluginManager().registerEvents(new RegionBillAddListener(this), this);
+            new ProlongationTask(this).runTaskTimer(this, 1, 10 * 60 * 20);
+        }
         getServer().getPluginCommand("wgclaimpay").setExecutor(new WGClaimPayCommand(this));
+    }
+
+    @Override
+    public void onDisable() {
+        instance = null;
     }
 
     @Override
@@ -58,6 +87,14 @@ public class WGClaimPayPlugin extends JavaPlugin {
             worldEdit = (WorldEditPlugin) Check.notNull(getServer().getPluginManager().getPlugin("WorldEdit"));
         } catch (Exception e) {
             throw new RuntimeException("WorldEdit plugin not found");
+        }
+    }
+
+    private void hookWorldGuard() {
+        try {
+            worldGuard = (WorldGuardPlugin) Check.notNull(getServer().getPluginManager().getPlugin("WorldGuard"));
+        } catch (Exception e) {
+            throw new RuntimeException("WorldGuard plugin not found");
         }
     }
 }
