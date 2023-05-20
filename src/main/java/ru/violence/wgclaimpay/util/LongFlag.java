@@ -14,15 +14,17 @@ public class LongFlag extends Flag<Long> {
         super(name);
     }
 
+    @Override
     public Long parseInput(FlagContext context) throws InvalidFlagFormat {
         String input = context.getUserInput();
         try {
             return Long.parseLong(input);
-        } catch (NumberFormatException var2) {
+        } catch (NumberFormatException e) {
             throw new InvalidFlagFormat("Not a long: " + input);
         }
     }
 
+    @Override
     public Long unmarshal(Object o) {
         if (o instanceof Long) {
             return (Long) o;
@@ -31,6 +33,7 @@ public class LongFlag extends Flag<Long> {
         }
     }
 
+    @Override
     public Object marshal(Long o) {
         return o;
     }
