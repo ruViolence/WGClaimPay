@@ -128,7 +128,8 @@ public class BillsMenu extends Menu {
                         world.getName(),
                         region.getId(),
                         Utils.calcBillPrice(player, region, true),
-                        Utils.calcBillPrice(player, region, false)
+                        Utils.calcBillPrice(player, region, false),
+                        Utils.renderNextBillTimeText(player, region)
                 ))), (p, m, b, c) -> {
             if (checkLockButtons()) return;
             Bukkit.getScheduler().runTaskAsynchronously(WGClaimPayPlugin.getInstance(), () -> {
@@ -147,7 +148,8 @@ public class BillsMenu extends Menu {
                         world.getName(),
                         region.getId(),
                         Utils.calcBillPrice(player, region, true),
-                        Utils.calcBillPrice(player, region, false)
+                        Utils.calcBillPrice(player, region, false),
+                        Utils.renderNextBillTimeText(player, region)
                 ))), (p, m, b, c) -> {
             if (checkLockButtons()) return;
             Bukkit.getScheduler().runTaskAsynchronously(WGClaimPayPlugin.getInstance(), () -> {

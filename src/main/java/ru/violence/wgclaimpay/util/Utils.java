@@ -14,8 +14,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.violence.coreapi.bukkit.api.BukkitHelper;
+import ru.violence.coreapi.common.api.util.TimeUtil;
+import ru.violence.coreapi.common.message.LegacyPrinter;
+import ru.violence.coreapi.common.user.User;
 import ru.violence.coreapi.common.util.Check;
 import ru.violence.coreapi.common.util.MathUtil;
+import ru.violence.wgclaimpay.LangKeys;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
 import ru.violence.wgclaimpay.api.event.RegionBillRemovedEvent;
 import ru.violence.wgclaimpay.config.Config;
@@ -304,5 +309,32 @@ public class Utils {
         if (removedRegions != null) new RegionBillRemovedEvent(world, removedRegions).callEvent();
 
         return true;
+    }
+
+    public @NotNull String renderNextBillTimeText(@NotNull Player player, @NotNull ProtectedRegion region) {
+        User user = Check.notNull(BukkitHelper.getUser(player));
+
+        Long flag = region.getFlag(Flags.BILL_SINCE);
+        long billSinceTime = flag == null ? TimeUtil.currentTimeSeconds() : flag;
+        long nextPayTime = billSinceTime + Config.Price.Prolongation.TIME_SECONDS;
+
+        int days = 0;
+        int hoursNormalized = 0;
+        int minutesNormalized = 0;
+
+        long currentTimeSeconds = TimeUtil.currentTimeSeconds();
+        if (nextPayTime > currentTimeSeconds) {
+            long remainingSeconds = nextPayTime - currentTimeSeconds;
+
+            days = (int) TimeUtil.toDays(remainingSeconds);
+            hoursNormalized = TimeUtil.toHoursNormalized(remainingSeconds);
+            minutesNormalized = TimeUtil.toMinutesNormalized(remainingSeconds);
+        }
+
+        return LegacyPrinter.print(LangKeys.NEXT_BILL_TIME.setLang(user.getLanguage()).setArgs(
+                days,
+                hoursNormalized,
+                minutesNormalized
+        ));
     }
 }
