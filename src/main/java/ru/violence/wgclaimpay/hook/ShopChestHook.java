@@ -22,10 +22,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ShopChestHook implements Listener {
-    private ShopChestHook() {}
+    private final WGClaimPayPlugin plugin;
+
+    private ShopChestHook(WGClaimPayPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     public static void init(WGClaimPayPlugin plugin) {
-        Bukkit.getPluginManager().registerEvents(new ShopChestHook(), plugin);
+        Bukkit.getPluginManager().registerEvents(new ShopChestHook(plugin), plugin);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -33,7 +37,7 @@ public class ShopChestHook implements Listener {
         removeShops(event.getWorld(), event.getRegions());
     }
 
-    private static void removeShops(@NotNull World world, @NotNull Collection<ProtectedRegion> regions) {
+    private void removeShops(@NotNull World world, @NotNull Collection<ProtectedRegion> regions) {
         if (!Bukkit.getPluginManager().isPluginEnabled("ShopChest")) return;
 
         Database shopDatabase = ShopChest.getInstance().getShopDatabase();
@@ -62,6 +66,11 @@ public class ShopChestHook implements Listener {
                         Location location = shop.getLocation();
 
                         if (region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+                            // Some region still remains at this location
+                            if (plugin.getWorldGuard().getRegionContainer().get(world).getApplicableRegions(location).size() != 0) {
+                                continue;
+                            }
+
                             Shop loadedShop = shopUtils.getShop(location);
                             if (loadedShop != null) shop = loadedShop;
 
