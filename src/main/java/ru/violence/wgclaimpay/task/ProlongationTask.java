@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import ru.violence.coreapi.common.util.TimeUtil;
+import ru.violence.coreapi.common.api.util.TimeUtil;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
 import ru.violence.wgclaimpay.api.event.RegionBillExpireEvent;
 import ru.violence.wgclaimpay.config.Config;
