@@ -32,6 +32,7 @@ public class WGClaimPayPlugin extends JavaPlugin {
 
         worldGuard.getFlagRegistry().register(Flags.BILL_PAYERS);
         worldGuard.getFlagRegistry().register(Flags.BILL_SINCE);
+        worldGuard.getFlagRegistry().register(Flags.BILL_BYPASS);
     }
 
     @Override

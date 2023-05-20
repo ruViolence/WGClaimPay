@@ -1,5 +1,6 @@
 package ru.violence.wgclaimpay.task;
 
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.World;
@@ -26,6 +27,8 @@ public class ProlongationTask extends BukkitRunnable {
 
             // Skip non-player regions
             if (region.getOwners().size() == 0) continue;
+            // Skip bypassed
+            if (StateFlag.test(region.getFlag(Flags.BILL_BYPASS))) continue;
 
             // Recently created region
             Long billSince = region.getFlag(Flags.BILL_SINCE);
