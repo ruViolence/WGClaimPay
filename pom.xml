@@ -79,6 +79,13 @@
             <systemPath>${project.basedir}/libs/worldguard-legacy-6.2.2-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>de.epiceric</groupId>
+            <artifactId>ShopChest</artifactId>
+            <version>1.13-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/ShopChest-1.13-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>

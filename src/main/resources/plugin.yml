@@ -1,6 +1,7 @@
 name: WGClaimPay
 main: ru.violence.wgclaimpay.WGClaimPayPlugin
 version: ${project.version}
-depend: [CoreAPI, Vault, WorldGuard]
-commands: 
+depend: [ CoreAPI, Vault, WorldGuard ]
+softdepend: [ ShopChest ]
+commands:
   wgclaimpay:

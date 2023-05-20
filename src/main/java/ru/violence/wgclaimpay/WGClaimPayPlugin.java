@@ -4,12 +4,14 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.violence.coreapi.common.util.Check;
 import ru.violence.wgclaimpay.command.WGClaimPayCommand;
 import ru.violence.wgclaimpay.config.Config;
 import ru.violence.wgclaimpay.flag.Flags;
+import ru.violence.wgclaimpay.hook.ShopChestHook;
 import ru.violence.wgclaimpay.listener.RegionBillAddListener;
 import ru.violence.wgclaimpay.listener.RegionClaimPayListener;
 import ru.violence.wgclaimpay.listener.RegionSizeCheckListener;
@@ -43,6 +45,8 @@ public class WGClaimPayPlugin extends JavaPlugin {
         reloadConfig();
 
         hookVault();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("ShopChest")) ShopChestHook.init(this);
 
         if (Config.MIN_SIZE > 0) {
             getServer().getPluginManager().registerEvents(new RegionSizeCheckListener(this), this);
