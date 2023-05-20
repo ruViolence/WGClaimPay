@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.violence.coreapi.common.util.Check;
 import ru.violence.coreapi.common.util.MathUtil;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
+import ru.violence.wgclaimpay.api.event.RegionBillRemovedEvent;
 import ru.violence.wgclaimpay.config.Config;
 import ru.violence.wgclaimpay.flag.Flags;
 
@@ -298,7 +299,10 @@ public class Utils {
     public boolean removeRegion(@NotNull World world, @NotNull ProtectedRegion region) {
         RegionManager manager = WGClaimPayPlugin.getInstance().getWorldGuard().getRegionContainer().get(world);
         if (manager == null) return false;
-        manager.removeRegion(region.getId());
+
+        Set<ProtectedRegion> removedRegions = manager.removeRegion(region.getId());
+        if (removedRegions != null) new RegionBillRemovedEvent(world, removedRegions).callEvent();
+
         return true;
     }
 }

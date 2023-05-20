@@ -8,6 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import ru.violence.coreapi.common.util.TimeUtil;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
+import ru.violence.wgclaimpay.api.event.RegionBillExpireEvent;
 import ru.violence.wgclaimpay.config.Config;
 import ru.violence.wgclaimpay.flag.Flags;
 import ru.violence.wgclaimpay.util.Utils;
@@ -44,8 +45,10 @@ public class ProlongationTask extends BukkitRunnable {
             if (Utils.tryWithdrawBilling(pair)) {
                 region.setFlag(Flags.BILL_SINCE, TimeUtil.currentTimeSeconds());
             } else {
-                plugin.getLogger().info("[Prolongation] Removing region " + world.getName() + ":" + region.getId());
-                Utils.removeRegion(world, region);
+                if (new RegionBillExpireEvent(world, region).callEvent()) {
+                    plugin.getLogger().info("[Prolongation] Removing region " + world.getName() + ":" + region.getId());
+                    Utils.removeRegion(world, region);
+                }
             }
         }
     }
