@@ -2,7 +2,7 @@ package ru.violence.wgclaimpay.config;
 
 import lombok.experimental.UtilityClass;
 import org.bukkit.configuration.file.FileConfiguration;
-import ru.violence.coreapi.common.util.Check;
+import ru.violence.coreapi.common.api.util.Check;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
 
 @UtilityClass

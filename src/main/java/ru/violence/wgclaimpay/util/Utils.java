@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.violence.coreapi.bukkit.api.BukkitHelper;
+import ru.violence.coreapi.bukkit.api.util.BukkitHelper;
+import ru.violence.coreapi.common.api.message.Renderer;
+import ru.violence.coreapi.common.api.user.User;
+import ru.violence.coreapi.common.api.util.Check;
+import ru.violence.coreapi.common.api.util.MathUtil;
 import ru.violence.coreapi.common.api.util.TimeUtil;
-import ru.violence.coreapi.common.message.LegacyPrinter;
-import ru.violence.coreapi.common.user.User;
-import ru.violence.coreapi.common.util.Check;
-import ru.violence.coreapi.common.util.MathUtil;
 import ru.violence.wgclaimpay.LangKeys;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
 import ru.violence.wgclaimpay.api.event.RegionBillRemovedEvent;
@@ -312,7 +312,7 @@ public class Utils {
     }
 
     public @NotNull String renderNextBillTimeText(@NotNull Player player, @NotNull ProtectedRegion region) {
-        User user = Check.notNull(BukkitHelper.getUser(player));
+        User user = Check.notNull(BukkitHelper.getUser(player)).orElse(null);
 
         Long flag = region.getFlag(Flags.BILL_SINCE);
         long billSinceTime = flag == null ? TimeUtil.currentTimeSeconds() : flag;
@@ -331,7 +331,7 @@ public class Utils {
             minutesNormalized = TimeUtil.toMinutesNormalized(remainingSeconds);
         }
 
-        return LegacyPrinter.print(LangKeys.NEXT_BILL_TIME.setLang(user.getLanguage()).setArgs(
+        return Renderer.legacy(user, LangKeys.NEXT_BILL_TIME.setArgs(
                 days,
                 hoursNormalized,
                 minutesNormalized

@@ -11,7 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.violence.coreapi.bukkit.api.BukkitHelper;
+import ru.violence.coreapi.bukkit.api.util.BukkitHelper;
 import ru.violence.wgclaimpay.LangKeys;
 import ru.violence.wgclaimpay.WGClaimPayPlugin;
 import ru.violence.wgclaimpay.config.Config;
@@ -48,18 +48,18 @@ public class RegionClaimPayListener implements Listener {
         try {
             if (!checkConfirmation(player, selector, regionSize)) {
                 event.setCancelled(true);
-                BukkitHelper.getUser(player).sendMessage(LangKeys.AWAITING_CONFIRMATION.setArgs(price, regionSize, regionId));
+                BukkitHelper.getUser(player).ifPresent(user -> user.sendMessage(LangKeys.AWAITING_CONFIRMATION.setArgs(price, regionSize, regionId)));
                 return;
             }
 
             if (balance < price || !plugin.getEconomy().withdrawPlayer(player, price).transactionSuccess()) {
                 event.setCancelled(true);
-                BukkitHelper.getUser(player).sendMessage(LangKeys.NOT_ENOUGH_MONEY.setArgs(price, balance, regionSize, regionId));
+                BukkitHelper.getUser(player).ifPresent(user -> user.sendMessage(LangKeys.NOT_ENOUGH_MONEY.setArgs(price, balance, regionSize, regionId)));
                 return;
             }
 
             plugin.getLogger().info("Charged " + price + " money from the " + player.getName() + " for the region " + event.getRegionId() + " (" + regionSize + ")");
-            BukkitHelper.getUser(player).sendMessage(LangKeys.PAID_FOR_REGION.setArgs(price, regionSize, regionId));
+            BukkitHelper.getUser(player).ifPresent(user -> user.sendMessage(LangKeys.PAID_FOR_REGION.setArgs(price, regionSize, regionId)));
         } catch (IncompleteRegionException e) {
             event.setCancelled(true);
             player.sendMessage("§cError: " + e.getClass().getName());

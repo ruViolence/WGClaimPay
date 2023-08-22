@@ -1,7 +1,7 @@
 package ru.violence.wgclaimpay;
 
 import lombok.experimental.UtilityClass;
-import ru.violence.coreapi.common.message.MessageKey;
+import ru.violence.coreapi.common.api.message.MessageKey;
 
 @UtilityClass
 public class LangKeys {

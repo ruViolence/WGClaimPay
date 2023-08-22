@@ -7,7 +7,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.violence.coreapi.common.util.Check;
+import ru.violence.coreapi.common.api.util.Check;
 import ru.violence.wgclaimpay.command.WGClaimPayCommand;
 import ru.violence.wgclaimpay.config.Config;
 import ru.violence.wgclaimpay.flag.Flags;
